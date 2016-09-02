@@ -102,7 +102,20 @@ function report() {
 
     report.save(null, {
         success: function(report) {
-            back();
+            Parse.Push.send({
+                channels: ["supervisor","p2314097710"],
+                data: {
+                    alert: currentUser.get("firstName") + " just reported a repair."
+                }
+            }, {
+                success: function() {
+                    // Push was successful
+                    back();
+                },
+                error: function(error) {
+                    // Handle error
+                }
+            });
         },
         error: function(report, error) {
 
