@@ -77,10 +77,12 @@ function logIn() {
         success: function(user) {
             // Do stuff after successful login.
             console.log("signed in");
+            location.reload();
         },
         error: function(user, error) {
             // The login failed. Check error to see why.
             alert("Please check your account information and try again.");
+            location.reload();
         }
     });
 }
