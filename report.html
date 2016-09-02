@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="w3.css">
+    <script src="parse.js"></script>
+    <title>atRepair - Report</title>
+</head>
+<div id="load" class="w3-display-middle" style="display: none;">
+    <center>
+        <img class="class=fa fa-spinner w3-spin" style="height:50px;" src="loader.png">
+        <p>Loading</p>
+    </center>
+</div>
+
+<body style="background-color:#eeeeee;">
+    <ul class="w3-navbar w3-white w3-border">
+        <li><a class="w3-hover-red" onclick="back();">Cancel</a></li>
+        <li class="w3-right"><a class="w3-hover-green" onclick="report();">Report</a></li>
+    </ul>
+    <div id="main" class="w3-padding-24 w3-display-middle" style="background-color:white;padding:24px;border-radius:16px;width:50%;">
+        <div class="w3-row">
+            <div class="w3-container w3-third" style="min-width:200px;">
+                <p class="inputFieldText">Model</p>
+                <select name="model" id="modelField" style="width:100%;">
+                    <option value="iPhone 4">iPhone 4</option>
+                    <option value="iPhone 4s">iPhone 4S</option>
+                    <option value="iPhone 5">iPhone 5</option>
+                    <option value="iPhone 5c">iPhone 5C</option>
+                    <option value="iPhone 5s">iPhone 5S</option>
+                    <option value="iPhone SE">iPhone SE</option>
+                    <option value="iPhone 6">iPhone 6</option>
+                    <option value="iPhone 6+">iPhone 6 Plus</option>
+                    <option value="iPhone 6s">iPhone 6S</option>
+                    <option value="iPhone 6s+">iPhone 6S Plus</option>
+                </select>
+                <p class="inputFieldText">Color</p>
+                <select name="model" id="colorField" style="width:100%;">
+                    <option value="Light">Light</option>
+                    <option value="Dark">Dark</option>
+                </select>
+            </div>
+            <div class="w3-container w3-third" style="min-width:200px;">
+                <p class="inputFieldText">First Name</p>
+                <input type="default" id="firstNameField" style="width:100%;" placeholder="first name">
+                <p class="inputFieldText">Last Name</p>
+                <input type="default" id="lastNameField" style="width:100%;" placeholder="last name">
+            </div>
+            <div class="w3-container w3-third" style="min-width:200px;">
+                <p class="inputFieldText">Phone</p>
+                <input type="phone" name="phone" id="phoneField" style="width:100%;" placeholder="phone">
+                <p class="inputFieldText">School</p>
+                <select name="model" id="schoolField" style="width:100%;">
+                    <option value="CHS">CHS</option>
+                    <option value="EMS">EMS</option>
+                    <option value="WSH">WSH</option>
+                    <option value="WMS">WMS</option>
+                    <option value="ERHS">ERHS</option>
+                    <option value="ERMS">ERMS</option>
+                    <option value="SFHS">SFHS</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</body>
+<div id="loaderView" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-8" style="background-color:white;height:150px;width:150px;border-radius:75px;">
+        <div class="w3-container">
+            <div class="w3-display-middle">
+                <center>
+                    <img class="class=fa fa-spinner w3-spin" style="height:50px;" src="loader.png">
+                    <p>Loading</p>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+Parse.initialize("Xv4b01iEQjiT2NcFQHliqYJU0nDDpoa8BAneiZu3", "s7HLwn3hHHH1TDpQGvDSGAX8SZCDq60PPgzhxMbn");
+
+var currentUser = Parse.User.current();
+
+function back() {
+    window.open(getURIParameter("back"), "_self");
+}
+
+function report() {
+    document.getElementById('loaderView').style.display = 'block';
+    var ReportClass = Parse.Object.extend("reportedRepairs");
+    var report = new ReportClass();
+
+    report.set("clientFirstName", document.getElementById("firstNameField").value);
+    report.set("clientLastName", document.getElementById("lastNameField").value);
+    report.set("clientPhone", document.getElementById("phoneField").value);
+    report.set("clientSchool", document.getElementById("schoolField").value);
+    report.set("deviceModel", document.getElementById("modelField").value);
+    report.set("deviceColor", document.getElementById("colorField").value);
+    report.set("reporterName", currentUser.get("firstName") + " " + currentUser.get("lastName"));
+    report.set("reporterPhone", currentUser.get("phone"));
+
+    report.save(null, {
+        success: function(report) {
+            back();
+        },
+        error: function(report, error) {
+
+        }
+    });
+}
+
+function getURIParameter(param, asArray) {
+    return document.location.search.substring(1).split('&').reduce(function(p, c) {
+        var parts = c.split('=', 2).map(function(param) {
+            return decodeURIComponent(param);
+        });
+        if (parts.length == 0 || parts[0] != param) return (p instanceof Array) && !asArray ? null : p;
+        return asArray ? p.concat(parts.concat(true)[1]) : parts.concat(true)[1];
+    }, []);
+}
+</script>
+
+</html>

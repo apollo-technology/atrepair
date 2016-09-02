@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="w3.css">
+    <script src="parse.js"></script>
+    <title>atRepair - Pricing</title>
+</head>
+
+<body>
+    <ul class="w3-navbar w3-grey w3-border">
+        <li><a class="w3-hover-red" onclick="back();" style="color:white;">Back</a></li>
+        <li class="w3-right"><a class="w3-hover-blue" onclick="reload();" style="color:white;">Reload</a></li>
+    </ul>
+    <thead>
+        <table class="w3-table w3-striped">
+            <tr>
+                <th style="width:80%;">Model</th>
+                <th>Price</th>
+            </tr>
+            <tr>
+                <td>iPhone 5</td>
+                <td id="5"></td>
+            </tr>
+            <tr>
+                <td>iPhone 5C</td>
+                <td id="5C"></td>
+            </tr>
+            <tr>
+                <td>iPhone 5S</td>
+                <td id="5S"></td>
+            </tr>
+            <tr>
+                <td>iPhone 6</td>
+                <td id="6"></td>
+            </tr>
+            <tr>
+                <td>iPhone 6 Plus</td>
+                <td id="6P"></td>
+            </tr>
+            <tr>
+                <td>iPhone SE</td>
+                <td id="SE"></td>
+            </tr>
+            <tr>
+                <td>iPhone 6S</td>
+                <td id="6S"></td>
+            </tr>
+            <tr>
+                <td>iPhone 6S Plus</td>
+                <td id="6SP"></td>
+            </tr>
+        </table>
+    </thead>
+</body>
+<div id="loaderView" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-8" style="background-color:white;height:150px;width:150px;border-radius:75px;">
+        <div class="w3-container">
+            <div class="w3-display-middle">
+                <center>
+                    <img class="class=fa fa-spinner w3-spin" style="height:50px;" src="loader.png">
+                    <p>Loading</p>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+Parse.initialize("Xv4b01iEQjiT2NcFQHliqYJU0nDDpoa8BAneiZu3", "s7HLwn3hHHH1TDpQGvDSGAX8SZCDq60PPgzhxMbn");
+
+function back() {
+    window.open(getURIParameter("back"), "_self");
+}
+
+function reload() {
+    window.open("pricing.html" + "?back=" + getURIParameter("back"), "_self");
+}
+
+function getURIParameter(param, asArray) {
+    return document.location.search.substring(1).split('&').reduce(function(p, c) {
+        var parts = c.split('=', 2).map(function(param) {
+            return decodeURIComponent(param);
+        });
+        if (parts.length == 0 || parts[0] != param) return (p instanceof Array) && !asArray ? null : p;
+        return asArray ? p.concat(parts.concat(true)[1]) : parts.concat(true)[1];
+    }, []);
+}
+
+function moneyFormat(initial) {
+    return "$" + initial + ".00";
+}
+document.getElementById('loaderView').style.display = 'block';
+var PricingClass = Parse.Object.extend("pricing");
+var query = new Parse.Query(PricingClass);
+query.find({
+    success: function(results) {
+        var prices = results[0];
+
+        document.getElementById("5").innerHTML = moneyFormat(prices.get("iPhone5"));
+        document.getElementById("5C").innerHTML = moneyFormat(prices.get("iPhone5C"));
+        document.getElementById("5S").innerHTML = moneyFormat(prices.get("iPhone5S"));
+        document.getElementById("6").innerHTML = moneyFormat(prices.get("iPhone6"));
+        document.getElementById("6P").innerHTML = moneyFormat(prices.get("iPhone6Plus"));
+        document.getElementById("SE").innerHTML = moneyFormat(prices.get("iPhoneSE"));
+        document.getElementById("6S").innerHTML = moneyFormat(prices.get("iPhone6S"));
+        document.getElementById("6SP").innerHTML = moneyFormat(prices.get("iPhone6SPlus"));
+        document.getElementById('loaderView').style.display = 'none';
+    },
+    error: function(error) {
+
+    }
+});
+</script>
+
+</html>

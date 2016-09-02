@@ -1,9 +1,89 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title></title>
-</head>
-<body>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="w3.css">
+<script src="parse.js"></script>
 
+<head>
+    <title>atRepair</title>
+</head>
+<div class="w3-display-middle">
+    <center>
+        <img class="class=fa fa-spinner w3-spin" style="height:50px;" src="loader.png">
+        <p>Loading</p>
+    </center>
+</div>
 </body>
+
+</html>
+
+<body class="w3-container">
+    <div id="loginModal" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width:600px;width:30%;min-width:300px;">
+            <div class="w3-center">
+                <br>
+                <img src="icon.jpg" style="width:30%" class="w3-circle w3-margin-top">
+            </div>
+            <div class=" w3-container w3-section">
+                <label><b>Email</b></label>
+                <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="email" id="email" name="email">
+                <label><b>Password</b></label>
+                <input class="w3-input w3-border" type="password" id="password" placeholder="password" name="psw">
+                <button style="background-color:#0f85fd;" class="w3-btn-block w3-section w3-padding" onclick="logIn();">Login</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+Parse.initialize("Xv4b01iEQjiT2NcFQHliqYJU0nDDpoa8BAneiZu3", "s7HLwn3hHHH1TDpQGvDSGAX8SZCDq60PPgzhxMbn");
+
+
+//Parse.User.logOut();
+
+var currentUser = Parse.User.current();
+if (currentUser) {
+    // do stuff with the user
+
+    console.log("already signed in");
+
+    var Users = Parse.Object.extend("_User");
+    var query = new Parse.Query(Users);
+    query.equalTo("username", currentUser.get("username"));
+    query.find({
+        success: function(results) {
+            var currentUser = results[0];
+
+            if (currentUser.get("job") == "reporter") {
+                window.open("reporter.html", "_self");
+            } else if (currentUser.get("job") == "supervisor") {
+                window.open("supervisor.html", "_self");
+            } else if (currentUser.get("job") == "technician") {
+                window.open("technician.html", "_self");
+            }
+        },
+        error: function(error) {
+            alert("Error: " + error.code + " " + error.message);
+        }
+    });
+} else {
+    // show the signup or login page
+    console.log("need to sign in");
+    document.getElementById('loginModal').style.display = 'block';
+}
+
+function logIn() {
+    console.log("logging in");
+    Parse.User.logIn(document.getElementById("email").value, document.getElementById("password").value, {
+        success: function(user) {
+            // Do stuff after successful login.
+            console.log("signed in");
+        },
+        error: function(user, error) {
+            // The login failed. Check error to see why.
+            alert("Please check your account information and try again.");
+        }
+    });
+}
+</script>
+
 </html>

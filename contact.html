@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="w3.css">
+    <script src="w3data.js"></script>
+    <script src="parse.js"></script>
+    <title>atRepair - Contacts</title>
+</head>
+
+<body>
+    <ul class="w3-navbar w3-white w3-border">
+        <li><a class="w3-hover-blue" onclick="back();">Back</a></li>
+    </ul>
+    <table id="table" class="w3-table w3-bordered w3-striped">
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+        </tr>
+        <tr w3-repeat="userData">
+            <td>{{name}}</td>
+            <td>{{phone}}</td>
+            <td>{{email}}</td>
+        </tr>
+    </table>
+</body>
+<div id="loaderView" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-8" style="background-color:white;height:150px;width:150px;border-radius:75px;">
+        <div class="w3-container">
+            <div class="w3-display-middle">
+                <center>
+                    <img class="class=fa fa-spinner w3-spin" style="height:50px;" src="loader.png">
+                    <p>Loading</p>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+Parse.initialize("Xv4b01iEQjiT2NcFQHliqYJU0nDDpoa8BAneiZu3", "s7HLwn3hHHH1TDpQGvDSGAX8SZCDq60PPgzhxMbn");
+
+function back() {
+    window.open(getURIParameter("back"), "_self");
+}
+
+function getURIParameter(param, asArray) {
+    return document.location.search.substring(1).split('&').reduce(function(p, c) {
+        var parts = c.split('=', 2).map(function(param) {
+            return decodeURIComponent(param);
+        });
+        if (parts.length == 0 || parts[0] != param) return (p instanceof Array) && !asArray ? null : p;
+        return asArray ? p.concat(parts.concat(true)[1]) : parts.concat(true)[1];
+    }, []);
+}
+document.getElementById('loaderView').style.display = 'block';
+var Users = Parse.Object.extend("_User");
+var query = new Parse.Query(Users);
+query.find({
+    success: function(results) {
+        var userArray = [];
+        for (var i = 0; i < results.length; i++) {
+            var object = results[i];
+            var user = {
+                "name": object.get("firstName") + " " + object.get("lastName"),
+                "phone": object.get("phone"),
+                "email": object.get("email")
+            };
+            userArray.push(user);
+            w3DisplayData("table", {
+                "userData": userArray
+            });
+        }
+        document.getElementById('loaderView').style.display = 'none';
+
+    },
+    error: function(error) {
+
+    }
+});
+</script>
+
+</html>
